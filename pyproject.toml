@@ -19,7 +19,7 @@ discord = "https://discord.gg/s3KuuzsPFb"
 
 [project]
 name = "navrim-lerobot"
-version = "0.1.0"
+version = "0.1.0.post1"
 description = "🤗 LeRobot: State-of-the-art Machine Learning for Real-World Robotics in Pytorch (Navrim fork)"
 authors = [
     { name = "Rémi Cadène", email = "re.cadene@gmail.com" },
