@@ -1,0 +1,86 @@
+name: "Publish phosphobot server"
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform to build for"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - pypi
+      publish:
+        description: "Whether to publish the release when using workflow_dispatch"
+        required: false
+        default: false
+        type: boolean
+  release:
+    types: [published]
+
+# To configure your package manager with this repository:
+# Configure your VM to access Artifact Registry packages using the following
+
+#  curl https://europe-west1-apt.pkg.dev/doc/repo-signing-key.gpg | sudo apt-key add -
+#  echo "deb https://europe-west1-apt.pkg.dev/projects/portal-385519 phospho-apt main" | sudo tee -a /etc/apt/sources.list.d/artifact-registry.list
+#  sudo apt update
+#  sudo apt install phosphobot
+
+permissions:
+  pull-requests: write
+  contents: write
+  # IMPORTANT: this permission is mandatory for Trusted Publishing
+  id-token: write
+
+jobs:
+  publish_pypi:
+    if: ${{ (github.event_name == 'release') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish && (github.event.inputs.platform == 'all' || github.event.inputs.platform == 'pypi')) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract current version
+        id: version
+        run: |
+          VERSION=$(grep '^version =' pyproject.toml | cut -d '"' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if the version is the same as the one already on PyPI
+        run: |
+          PACKAGE_NAME="navrim-lerobot"
+          VERSION=${{ steps.version.outputs.version }}
+
+          # Fetch the version list from PyPI
+          if curl --silent --fail "https://pypi.org/pypi/$PACKAGE_NAME/json" > pypi.json; then
+            if jq -e --arg VERSION "$VERSION" '.releases[$VERSION]' pypi.json > /dev/null; then
+              echo "Version $VERSION already exists on PyPI."
+              exit 1  # Optionally fail the job if version is already published
+            else
+              echo "Version $VERSION does not exist on PyPI. Proceeding..."
+            fi
+          else
+            echo "Package $PACKAGE_NAME not found on PyPI or network error."
+            exit 1
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build
+        run: |
+          uv build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install built wheel
+        run: |
+          python -m venv .testvenv
+          source .testvenv/bin/activate
+          pip install dist/navrim_lerobot-*.whl
+
+      - name: Publish to PyPI
+        run: |
+          uv publish -t ${{ secrets.PYPI_TOKEN }}
