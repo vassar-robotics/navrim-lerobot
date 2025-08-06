@@ -23,32 +23,3 @@ python read_leader_positions.py --port=/dev/ttyUSB0
 # Custom motor IDs and frequency
 python read_leader_positions.py --motor_ids=1,2,3,4 --hz=60
 ```
-
-Output format:
-```
-Motor  | Pos  |   %
---------------------
-1      | 2048 |  50%
-2      | 1024 |  25%
-3      | 3072 |  75%
-...
-```
-
-### set_middle_position_standalone.py
-Sets the middle position calibration for Feetech servo motors.
-
-```bash
-# Auto-detect robot and set middle position
-python set_middle_position_standalone.py
-
-# Specify port manually
-python set_middle_position_standalone.py --port=/dev/ttyUSB0
-```
-
-## Features
-
-- Auto-detects robot port
-- Displays real-time joint positions
-- Minimal dependencies (only pyserial)
-- Clean, compact terminal output
-- ~120 lines of code
