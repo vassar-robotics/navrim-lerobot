@@ -51,4 +51,4 @@ python set_middle_position_standalone.py --port=/dev/ttyUSB0
 - Displays real-time joint positions
 - Minimal dependencies (only pyserial)
 - Clean, compact terminal output
-- ~100 lines of code
+- ~120 lines of code
