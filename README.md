@@ -1,6 +1,6 @@
-# Robot Position Reader (Minimal)
+# Robot Position Tools (Minimal)
 
-A minimal script to read and display joint positions from SO101 robot in real-time.
+Minimal scripts to read positions and calibrate Feetech servo motors.
 
 ## Requirements
 
@@ -22,4 +22,18 @@ python read_leader_positions.py --port=/dev/ttyUSB0
 
 # Custom motor IDs and frequency
 python read_leader_positions.py --motor_ids=1,2,3,4 --hz=60
+```
+
+### set_middle_position.py
+Sets the current position of each servo to read as 2048 (middle position). Uses the special torque=128 command - the calibration takes effect immediately.
+
+```bash
+# Calibrate all servos to middle position
+python set_middle_position.py
+
+# Custom motor IDs
+python set_middle_position.py --motor_ids=1,2,3,4,5,6,7,8
+
+# Specify port manually
+python set_middle_position.py --port=/dev/ttyUSB0
 ```
