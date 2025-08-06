@@ -1,6 +1,6 @@
-# Leader Robot Position Reader (Minimal)
+# Robot Position Reader (Minimal)
 
-A minimal script to read and display joint positions from SO101 leader robot (5V) in real-time.
+A minimal script to read and display joint positions from SO101 robot in real-time.
 
 ## Requirements
 
@@ -11,10 +11,10 @@ A minimal script to read and display joint positions from SO101 leader robot (5V
 ## Scripts
 
 ### read_leader_positions.py
-Continuously reads and displays joint positions from the leader robot at 30 Hz.
+Continuously reads and displays joint positions from the robot at 30 Hz.
 
 ```bash
-# Auto-detect leader robot (5V) and display positions
+# Auto-detect robot port and display positions
 python read_leader_positions.py
 
 # Specify port manually
@@ -22,6 +22,16 @@ python read_leader_positions.py --port=/dev/ttyUSB0
 
 # Custom motor IDs and frequency
 python read_leader_positions.py --motor_ids=1,2,3,4 --hz=60
+```
+
+Output format:
+```
+Motor  | Pos  |   %
+--------------------
+1      | 2048 |  50%
+2      | 1024 |  25%
+3      | 3072 |  75%
+...
 ```
 
 ### set_middle_position_standalone.py
@@ -37,7 +47,8 @@ python set_middle_position_standalone.py --port=/dev/ttyUSB0
 
 ## Features
 
-- Auto-detects leader robot by voltage (5V)
+- Auto-detects robot port
 - Displays real-time joint positions
-- Minimal dependencies
-- Clean terminal output with position percentages 
+- Minimal dependencies (only pyserial)
+- Clean, compact terminal output
+- ~100 lines of code
